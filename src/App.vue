@@ -7,8 +7,10 @@ import GeoJSON from 'ol/format/GeoJSON';
 import View from 'ol/View'
 import Map from 'ol/Map'
 import VectorSource from 'ol/source/Vector';
-import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer';
-import Stamen from 'ol/source/Stamen';
+import {Vector as VectorLayer} from 'ol/layer';
+import OSM from 'ol/source/OSM';
+import Colorize from 'ol-ext/filter/Colorize';
+// import Stamen from 'ol/source/Stamen';
 import {bbox as bboxStrategy} from 'ol/loadingstrategy';
 import {
   Circle,
@@ -18,6 +20,7 @@ import {
   Text,
 } from 'ol/style';
 import 'ol/ol.css'
+import TileLayer from 'ol/layer/Tile';
 
 export default {
   name: 'App',
@@ -42,9 +45,9 @@ export default {
           image: new Circle({
             radius: 5,
             fill: new Fill({
-              color: '#f5cdee'
+              color: '#b3e5f8'
             }),
-            stroke: new Stroke({color: '#a20286', width: 1}),
+            stroke: new Stroke({color: '#03a7e6', width: 1}),
           }),
           text: new Text({
             text: feature.get('ortname_hov'),
@@ -64,15 +67,15 @@ export default {
       declutter: true
     });
 
+    const osm = new TileLayer({
+        source: new OSM()
+      })
+    osm.addFilter(new Colorize({ operation:'saturation', value: 0.1 }))
+
     new Map({
       target: this.$refs['map-root'],
       layers: [
-        new TileLayer({
-          source: new Stamen({layer: 'terrain-background'}),
-        }),
-        new TileLayer({
-          source: new Stamen({layer: 'terrain-lines'}),
-        }),
+        osm,
         vector
       ],
       view: new View({
