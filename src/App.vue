@@ -8,8 +8,15 @@ import View from 'ol/View'
 import Map from 'ol/Map'
 import VectorSource from 'ol/source/Vector';
 import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer';
-import OSM from 'ol/source/OSM'
+import Stamen from 'ol/source/Stamen';
 import {bbox as bboxStrategy} from 'ol/loadingstrategy';
+import {
+  Circle,
+  Fill,
+  Stroke,
+  Style,
+  Text,
+} from 'ol/style';
 import 'ol/ol.css'
 
 export default {
@@ -30,15 +37,41 @@ export default {
       strategy: bboxStrategy,
     });
 
+    const placeStyle = function(feature) {
+      return new Style({
+          image: new Circle({
+            radius: 5,
+            fill: new Fill({
+              color: '#f5cdee'
+            }),
+            stroke: new Stroke({color: '#a20286', width: 1}),
+          }),
+          text: new Text({
+            text: feature.get('ortname_hov'),
+            font: "bold 13px lato ",
+            stroke: new Stroke({
+              color: "white",
+              width: 4
+            }),
+            offsetX: 13,
+            textAlign: 'start'
+          })
+        })
+    }
     const vector = new VectorLayer({
       source: vectorSource,
+      style: placeStyle,
+      declutter: true
     });
 
     new Map({
       target: this.$refs['map-root'],
       layers: [
         new TileLayer({
-          source: new OSM()
+          source: new Stamen({layer: 'terrain-background'}),
+        }),
+        new TileLayer({
+          source: new Stamen({layer: 'terrain-lines'}),
         }),
         vector
       ],
@@ -60,7 +93,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
 
