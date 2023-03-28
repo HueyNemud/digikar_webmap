@@ -70,7 +70,7 @@ export default {
     const osm = new TileLayer({
         source: new OSM()
       })
-    osm.addFilter(new Colorize({ operation:'saturation', value: 0.1 }))
+    osm.addFilter(new Colorize({ operation:'grayscale', value: 1.0 }))
 
     new Map({
       target: this.$refs['map-root'],
